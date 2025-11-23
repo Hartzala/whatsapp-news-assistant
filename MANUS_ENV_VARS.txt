@@ -1,0 +1,29 @@
+# Variables d'Environnement Manus pour Railway
+
+Copiez-collez ces variables dans Railway (Variables → Raw Editor) :
+
+# ===== Manus OAuth =====
+JWT_SECRET=<voir dans vos secrets Manus>
+VITE_APP_ID=<voir dans vos secrets Manus>
+OAUTH_SERVER_URL=https://api.manus.im
+VITE_OAUTH_PORTAL_URL=https://auth.manus.im
+OWNER_OPEN_ID=<voir dans vos secrets Manus>
+OWNER_NAME=<voir dans vos secrets Manus>
+
+# ===== Manus Built-in APIs (Backend) =====
+BUILT_IN_FORGE_API_URL=https://api.manus.im
+BUILT_IN_FORGE_API_KEY=<voir dans vos secrets Manus>
+
+# ===== Manus Built-in APIs (Frontend) =====
+VITE_FRONTEND_FORGE_API_URL=https://api.manus.im
+VITE_FRONTEND_FORGE_API_KEY=<voir dans vos secrets Manus>
+
+# ===== Analytics Manus (Optionnel) =====
+VITE_ANALYTICS_ENDPOINT=<voir dans vos secrets Manus>
+VITE_ANALYTICS_WEBSITE_ID=<voir dans vos secrets Manus>
+
+---
+
+IMPORTANT : Les valeurs marquées "<voir dans vos secrets Manus>" doivent être récupérées depuis :
+- Le dashboard Manus de votre projet
+- Ou depuis l'interface de gestion des secrets Manus

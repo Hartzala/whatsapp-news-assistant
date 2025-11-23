@@ -1,0 +1,26 @@
+# Variables Manus pour Railway
+# Copiez-collez ces lignes dans Railway → Variables → Raw Editor
+
+# ===== Manus OAuth =====
+JWT_SECRET=2A85Pe82vi23gZN8pBsw8K
+VITE_APP_ID=5FVSxy9v7zaKjePpjJrC8F
+OAUTH_SERVER_URL=https://api.manus.im
+VITE_OAUTH_PORTAL_URL=https://manus.im
+OWNER_OPEN_ID=88ySb3MGCNbLE5MBjVZVLT
+OWNER_NAME=foyyanis
+
+# ===== Manus Built-in APIs (Backend) =====
+BUILT_IN_FORGE_API_URL=https://forge.manus.ai
+BUILT_IN_FORGE_API_KEY=aiKiw8qxR4MRT96JQZqBTz
+
+# ===== Manus Built-in APIs (Frontend) =====
+VITE_FRONTEND_FORGE_API_URL=https://forge.manus.ai
+VITE_FRONTEND_FORGE_API_KEY=fD5Q5YiZYPDa6LDKgaPJzD
+
+# ===== Analytics Manus =====
+VITE_ANALYTICS_ENDPOINT=https://manus-analytics.com
+VITE_ANALYTICS_WEBSITE_ID=e19b9ead-632b-4307-abe6-db5074114eaa
+
+# ===== Frontend App =====
+VITE_APP_TITLE=NewsBot
+VITE_APP_LOGO=/logo.svg

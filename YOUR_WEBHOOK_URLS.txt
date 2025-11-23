@@ -1,0 +1,65 @@
+# URLs de Webhooks pour Votre Projet
+
+## 🔗 Webhook Twilio WhatsApp
+
+Copiez-collez cette URL dans Twilio Console :
+
+```
+https://whatsapp-news-assistant-production.up.railway.app/api/webhooks/twilio/whatsapp
+```
+
+**Configuration Twilio** :
+1. Allez sur console.twilio.com
+2. Messaging → Try it out → Send a WhatsApp message
+3. Dans "When a message comes in", collez l'URL ci-dessus
+4. Sélectionnez HTTP POST
+5. Cliquez sur Save
+
+---
+
+## 💳 Webhook Stripe
+
+Copiez-collez cette URL dans Stripe Dashboard :
+
+```
+https://whatsapp-news-assistant-production.up.railway.app/api/webhooks/stripe
+```
+
+**Configuration Stripe** :
+1. Allez sur dashboard.stripe.com
+2. Developers → Webhooks → + Add endpoint
+3. Collez l'URL ci-dessus
+4. Sélectionnez les événements :
+   - customer.subscription.created
+   - customer.subscription.updated
+   - customer.subscription.deleted
+   - checkout.session.completed
+   - invoice.payment_succeeded
+   - invoice.payment_failed
+5. Cliquez sur Add endpoint
+6. Copiez le Webhook Secret (whsec_...)
+7. Ajoutez-le dans Railway → Variables :
+   STRIPE_WEBHOOK_SECRET=whsec_xxxxx
+
+---
+
+## 🧪 Test des Webhooks
+
+### Tester Twilio
+Envoyez un message WhatsApp à votre numéro Twilio et vous devriez recevoir une réponse de l'assistant IA.
+
+### Tester Stripe
+Dans Stripe Dashboard → Webhooks → Votre webhook → Send test webhook
+
+---
+
+## 🔍 Vérifier les Logs Railway
+
+Pour voir si les webhooks fonctionnent :
+1. Railway → Votre projet → Deployments
+2. Cliquez sur le déploiement actif
+3. Consultez les logs en temps réel
+
+Vous devriez voir :
+- `[Twilio] Received message from: whatsapp:+...`
+- `[Stripe] Webhook received: customer.subscription.created`
