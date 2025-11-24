@@ -89,6 +89,71 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+/**
+ * Get user by WhatsApp phone number
+ */
+export async function getUserByWhatsAppPhone(phoneNumber: string) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get user: database not available");
+    return undefined;
+  }
+
+  const result = await db.select().from(users).where(eq(users.whatsappPhoneNumber, phoneNumber)).limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * Create or get a user by WhatsApp phone number
+ * This is used for automatic user registration when they send their first message
+ */
+export async function getOrCreateUserByWhatsAppPhone(phoneNumber: string) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot create user: database not available");
+    return undefined;
+  }
+
+  try {
+    // First, try to find existing user
+    let user = await getUserByWhatsAppPhone(phoneNumber);
+    
+    if (user) {
+      console.log(`[Database] Found existing user for phone ${phoneNumber}: userId=${user.id}`);
+      return user;
+    }
+
+    // User doesn't exist, create a new one
+    // Use phone number as openId for WhatsApp-only users
+    const openId = `whatsapp:${phoneNumber}`;
+    
+    console.log(`[Database] Creating new user for phone ${phoneNumber}`);
+    
+    await db.insert(users).values({
+      openId,
+      whatsappPhoneNumber: phoneNumber,
+      name: null,
+      email: null,
+      loginMethod: "whatsapp",
+      role: "user",
+      lastSignedIn: new Date(),
+    });
+
+    // Retrieve the newly created user
+    user = await getUserByWhatsAppPhone(phoneNumber);
+    
+    if (user) {
+      console.log(`[Database] Successfully created user for phone ${phoneNumber}: userId=${user.id}`);
+    }
+    
+    return user;
+  } catch (error) {
+    console.error(`[Database] Error creating user for phone ${phoneNumber}:`, error);
+    return undefined;
+  }
+}
+
 // Subscription queries
 export async function getSubscriptionByUserId(userId: number) {
   const db = await getDb();

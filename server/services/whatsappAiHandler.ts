@@ -109,6 +109,10 @@ export async function handleWhatsAppMessage(phoneNumber: string, messageText: st
           response = await generateGreeting();
           break;
 
+        case "subscribe_premium":
+          response = await handleSubscriptionRequest(phoneNumber, userId);
+          break;
+
         default:
           response = await generateNaturalResponse(messageText, context, intentAnalysis.intent);
       }
@@ -283,9 +287,16 @@ async function handleFrequencySelection(
 async function handleSubscriptionRequest(phoneNumber: string, userId?: number): Promise<string> {
   try {
     if (!userId) {
-      return `Pour vous abonner, vous devez d'abord vous connecter sur notre site : https://votre-domaine.com
+      return `💳 **Abonnement Premium - 3,99€/mois**
 
-Une fois connecté, revenez ici et tapez "payer" pour obtenir votre lien de paiement.`;
+✅ Résumés automatiques quotidiens ou hebdomadaires
+✅ Questions illimitées
+✅ Personnalisation complète des thèmes
+
+Pour vous abonner, cliquez sur ce lien :
+https://votre-domaine.com/checkout?phone=${encodeURIComponent(phoneNumber)}
+
+Une fois le paiement effectué, vos résumés commenceront automatiquement ! 🎉`;
     }
 
     // Check if user already has an active subscription

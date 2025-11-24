@@ -75,7 +75,7 @@ export async function fetchNewsByTopic(
       forceMaxDataTimeWindow: daysBack <= 7 ? 7 : 31, // Optimize token usage
       resultType: "articles",
       apiKey: NEWS_API_KEY,
-      // lang: "fra", // Removed to get more results - language detection done by AI
+      sourceLocationUri: "http://en.wikipedia.org/wiki/France", // Filter for French sources only
       articleBodyLen: 300, // Limit body length to 300 chars
     };
 

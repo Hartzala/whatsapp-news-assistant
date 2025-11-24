@@ -192,3 +192,11 @@
 - [x] Corriger NewsAPI.ai (supprimer filtre langue fra)
 - [x] Ajouter logs détaillés NewsAPI pour debug
 - [ ] Déployer et tester sur Railway
+
+## Phase 24: Amélioration Prompts et Enregistrement Auto Utilisateurs
+- [x] Améliorer le prompt d'analyse d'intention (ajouter subscribe_premium, meilleurs exemples)
+- [x] Améliorer le prompt de génération de réponse (présenter fonctionnalités, supprimer mention compte)
+- [x] Permettre des réponses détaillées pour les actualités (pas de limite stricte)
+- [x] Filtrer uniquement les sources françaises dans NewsAPI.ai
+- [x] Implémenter l'enregistrement automatique des utilisateurs à la première interaction
+- [ ] Tester le flux complet (nouveau numéro → utilisateur gratuit → paiement → utilisateur payant)

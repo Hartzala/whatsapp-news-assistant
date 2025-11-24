@@ -8,6 +8,7 @@ import twilio from "twilio";
 const { MessagingResponse } = twilio.twiml;
 import { extractPhoneNumber } from "../services/twilioWhatsapp";
 import { handleWhatsAppMessage } from "../services/whatsappAiHandler";
+import { getOrCreateUserByWhatsAppPhone } from "../db";
 
 const router = Router();
 
@@ -34,9 +35,15 @@ router.post("/whatsapp", async (req, res) => {
     const phoneNumber = extractPhoneNumber(From);
     console.log("[Twilio Webhook] Extracted phone:", phoneNumber);
 
+    // Get or create user automatically (first message = auto registration)
+    console.log("[Twilio Webhook] Getting or creating user...");
+    const user = await getOrCreateUserByWhatsAppPhone(phoneNumber);
+    const userId = user?.id;
+    console.log("[Twilio Webhook] User ID:", userId);
+
     // Handle the incoming message with AI
     console.log("[Twilio Webhook] Calling handleWhatsAppMessage...");
-    const result = await handleWhatsAppMessage(phoneNumber, Body || "");
+    const result = await handleWhatsAppMessage(phoneNumber, Body || "", userId);
     console.log("[Twilio Webhook] Handler result:", result);
 
     // Create Twilio MessagingResponse
