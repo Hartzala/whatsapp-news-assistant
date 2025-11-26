@@ -35,9 +35,10 @@ export const stripeRouter = router({
         };
       }
 
-      // Get user's WhatsApp phone number from database
-      const dbUser = await getUserByOpenId(user.openId);
-      const phoneNumber = dbUser?.whatsappPhoneNumber || "";
+      // Extract phone number from openId (format: whatsapp:+33612345678)
+      const phoneNumber = user.openId.startsWith('whatsapp:') 
+        ? user.openId.replace('whatsapp:', '') 
+        : "";
 
       // Create Stripe Checkout Session
       const result = await createCheckoutSession(

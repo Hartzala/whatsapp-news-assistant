@@ -129,13 +129,18 @@ export async function runSynthesisScheduler(): Promise<void> {
         );
 
         // Send to WhatsApp
-        if (user.whatsappPhoneNumber) {
+        // Extract phone number from openId (format: whatsapp:+33612345678)
+        const phoneNumber = user.openId.startsWith('whatsapp:') 
+          ? user.openId.replace('whatsapp:', '') 
+          : null;
+        
+        if (phoneNumber) {
           console.log(
-            `[Scheduler] Sending synthesis to ${user.whatsappPhoneNumber}`
+            `[Scheduler] Sending synthesis to ${phoneNumber}`
           );
 
           const sendResult = await sendSynthesisToUser(
-            user.whatsappPhoneNumber,
+            phoneNumber,
             topics,
             formattedContent
           );

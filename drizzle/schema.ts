@@ -12,10 +12,8 @@ export const users = mysqlTable("users", {
    * Use this for relations between tables.
    */
   id: int("id").autoincrement().primaryKey(),
-  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
+  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. For WhatsApp users, format is: whatsapp:+33612345678 */
   openId: varchar("openId", { length: 64 }).notNull().unique(),
-  /** WhatsApp phone number (international format: +33612345678) */
-  whatsappPhoneNumber: varchar("whatsappPhoneNumber", { length: 20 }),
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),

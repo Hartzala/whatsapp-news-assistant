@@ -200,3 +200,10 @@
 - [x] Filtrer uniquement les sources françaises dans NewsAPI.ai
 - [x] Implémenter l'enregistrement automatique des utilisateurs à la première interaction
 - [ ] Tester le flux complet (nouveau numéro → utilisateur gratuit → paiement → utilisateur payant)
+
+## Phase 27: Correction Envoi Message WhatsApp
+- [x] Analyser le webhook Twilio : réponse générée mais pas envoyée
+- [x] Vérifier le code d'envoi de message dans twilioWebhook.ts
+- [x] Corriger le problème : supprimer whatsappPhoneNumber du schéma Drizzle
+- [x] Corriger synthesisScheduler.ts et stripe.ts pour utiliser openId
+- [ ] Tester et pousser sur GitHub
