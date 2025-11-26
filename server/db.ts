@@ -90,23 +90,9 @@ export async function getUserByOpenId(openId: string) {
 }
 
 /**
- * Get user by WhatsApp phone number
- */
-export async function getUserByWhatsAppPhone(phoneNumber: string) {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get user: database not available");
-    return undefined;
-  }
-
-  const result = await db.select().from(users).where(eq(users.whatsappPhoneNumber, phoneNumber)).limit(1);
-
-  return result.length > 0 ? result[0] : undefined;
-}
-
-/**
  * Create or get a user by WhatsApp phone number
  * This is used for automatic user registration when they send their first message
+ * Uses openId format: whatsapp:+33695107796
  */
 export async function getOrCreateUserByWhatsAppPhone(phoneNumber: string) {
   const db = await getDb();
@@ -116,8 +102,11 @@ export async function getOrCreateUserByWhatsAppPhone(phoneNumber: string) {
   }
 
   try {
-    // First, try to find existing user
-    let user = await getUserByWhatsAppPhone(phoneNumber);
+    // Use phone number as openId for WhatsApp-only users
+    const openId = `whatsapp:${phoneNumber}`;
+    
+    // First, try to find existing user by openId
+    let user = await getUserByOpenId(openId);
     
     if (user) {
       console.log(`[Database] Found existing user for phone ${phoneNumber}: userId=${user.id}`);
@@ -125,14 +114,10 @@ export async function getOrCreateUserByWhatsAppPhone(phoneNumber: string) {
     }
 
     // User doesn't exist, create a new one
-    // Use phone number as openId for WhatsApp-only users
-    const openId = `whatsapp:${phoneNumber}`;
-    
     console.log(`[Database] Creating new user for phone ${phoneNumber}`);
     
     await db.insert(users).values({
       openId,
-      whatsappPhoneNumber: phoneNumber,
       name: null,
       email: null,
       loginMethod: "whatsapp",
@@ -141,7 +126,7 @@ export async function getOrCreateUserByWhatsAppPhone(phoneNumber: string) {
     });
 
     // Retrieve the newly created user
-    user = await getUserByWhatsAppPhone(phoneNumber);
+    user = await getUserByOpenId(openId);
     
     if (user) {
       console.log(`[Database] Successfully created user for phone ${phoneNumber}: userId=${user.id}`);
