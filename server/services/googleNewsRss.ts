@@ -133,9 +133,16 @@ export async function fetchNewsByTopic(
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - daysBack);
       
+      console.log(`[Google News RSS] Cutoff date: ${cutoffDate.toISOString()}`);
+      console.log(`[Google News RSS] First 3 article dates: ${articles.slice(0, 3).map(a => a.dateTime).join(', ')}`);
+      
       const filteredArticles = articles.filter(article => {
         const articleDate = new Date(article.dateTime);
-        return articleDate >= cutoffDate;
+        const isRecent = articleDate >= cutoffDate;
+        if (!isRecent && articles.indexOf(article) < 3) {
+          console.log(`[Google News RSS] Article "${article.title.substring(0, 50)}..." rejected: ${articleDate.toISOString()} < ${cutoffDate.toISOString()}`);
+        }
+        return isRecent;
       });
       
       console.log(`[Google News RSS] Filtered ${articles.length} articles to ${filteredArticles.length} (within ${daysBack} days)`);
