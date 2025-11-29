@@ -4,7 +4,7 @@
  */
 
 import { generateSynthesisWithOpenAI } from "./openaiSynthesis";
-import { fetchNewsByTopics, formatArticlesForSynthesis } from "./newsApi";
+import { fetchNewsByTopics, formatArticlesForSynthesis } from "./googleNewsRss";
 
 interface SynthesisResult {
   success: boolean;

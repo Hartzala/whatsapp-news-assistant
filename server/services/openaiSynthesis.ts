@@ -4,7 +4,7 @@
  */
 
 import OpenAI from "openai";
-import { fetchNewsByTopics, NewsArticle } from "./newsApi";
+import { fetchNewsByTopics, NewsArticle } from "./googleNewsRss";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
 
@@ -26,7 +26,8 @@ function getOpenAIClient(): OpenAI | null {
 export async function generateSynthesisWithOpenAI(
   topics: string[],
   articlesPerTopic: number = 5,
-  daysBack: number = 7
+  daysBack: number = 7,
+  userQuestion?: string
 ): Promise<{
   success: boolean;
   synthesis?: string;
@@ -82,24 +83,43 @@ export async function generateSynthesisWithOpenAI(
     console.log(`[OpenAI] Generating synthesis for ${totalArticles} articles`);
 
     // Generate synthesis with OpenAI
+    const systemPrompt = userQuestion
+      ? `Tu es un assistant spécialisé qui répond aux questions sur l'actualité.
+Ta mission est de répondre DIRECTEMENT à la question posée en te basant sur les articles fournis.
+Utilise un ton professionnel mais accessible.
+Sois précis et factuel.
+Si les articles ne contiennent pas d'information pertinente pour la question, dis-le clairement.
+Limite ta réponse à 2000 caractères maximum.`
+      : `Tu es un assistant spécialisé dans la synthèse d'actualités.
+Ta mission est de créer des résumés clairs, concis et informatifs en français.
+Structure ta réponse par thème, en mettant en avant les informations les plus importantes.
+Utilise un ton professionnel mais accessible.
+Limite ta synthèse à 2000 caractères maximum.`;
+
+    const userPrompt = userQuestion
+      ? `Question de l'utilisateur : "${userQuestion}"
+
+Voici les articles d'actualité récents :
+
+${articlesText}
+
+Réponds à la question en te basant sur ces articles. Sois direct et précis.`
+      : `Crée une synthèse d'actualités à partir des articles suivants :
+
+${articlesText}
+
+Organise la synthèse par thème et mets en avant les points clés de chaque article.`;
+
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: `Tu es un assistant spécialisé dans la synthèse d'actualités. 
-Ta mission est de créer des résumés clairs, concis et informatifs en français.
-Structure ta réponse par thème, en mettant en avant les informations les plus importantes.
-Utilise un ton professionnel mais accessible.
-Limite ta synthèse à 2000 caractères maximum.`,
+          content: systemPrompt,
         },
         {
           role: "user",
-          content: `Crée une synthèse d'actualités à partir des articles suivants :
-
-${articlesText}
-
-Organise la synthèse par thème et mets en avant les points clés de chaque article.`,
+          content: userPrompt,
         },
       ],
       temperature: 0.7,

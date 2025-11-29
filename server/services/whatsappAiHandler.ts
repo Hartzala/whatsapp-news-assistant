@@ -8,7 +8,7 @@ import {
 } from "./conversationContext";
 import { createOrUpdateUserPreferences, getSubscriptionByUserId, getUserByOpenId } from "../db";
 import { sendWhatsAppMessage } from "./twilioWhatsapp";
-import { fetchNewsByTopic } from "./newsApi";
+import { fetchNewsByTopic } from "./googleNewsRss";
 import { generateSynthesisWithOpenAI } from "./openaiSynthesis";
 
 const AVAILABLE_TOPICS = [
@@ -166,7 +166,67 @@ Je suis votre assistant d'actualités personnalisées. Voici ce que je peux fair
 }
 
 /**
- * Handle free questions - answer in real-time using NewsAPI (limited to 5/day)
+ * Extract search keywords from user question using OpenAI
+ */
+async function extractKeywordsFromQuestion(question: string): Promise<string> {
+  try {
+    const { invokeLLM } = await import("../_core/llm");
+    
+    const response = await invokeLLM({
+      messages: [
+        {
+          role: "system",
+          content: `Tu es un assistant qui extrait les mots-clés pertinents d'une question pour rechercher des actualités.
+Réponds UNIQUEMENT avec les mots-clés en français, séparés par des espaces.
+Exemple: "Quoi de neuf en technologie ?" → "technologie tech numérique"
+Exemple: "Résume l'actualité sportive" → "sport football tennis rugby"
+Exemple: "Que se passe-t-il en politique ?" → "politique gouvernement élection"`,
+        },
+        {
+          role: "user",
+          content: question,
+        },
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "keywords_extraction",
+          strict: true,
+          schema: {
+            type: "object",
+            properties: {
+              keywords: {
+                type: "string",
+                description: "Les mots-clés extraits de la question, séparés par des espaces",
+              },
+            },
+            required: ["keywords"],
+            additionalProperties: false,
+          },
+        },
+      },
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      console.warn("[Keywords Extraction] Empty response from LLM");
+      return "actualité news france";
+    }
+
+    const parsed = JSON.parse(content as string);
+    const keywords = parsed.keywords || "actualité news france";
+    
+    console.log(`[Keywords Extraction] Question: "${question}" → Keywords: "${keywords}"`);
+    return keywords;
+  } catch (error) {
+    console.error("[Keywords Extraction] Error:", error);
+    // Fallback: return generic keywords
+    return "actualité news france";
+  }
+}
+
+/**
+ * Handle free questions - answer in real-time using Google News RSS (limited to 5/day)
  */
 async function handleQuestion(phoneNumber: string, question: string, userId?: number): Promise<string> {
   try {
@@ -196,8 +256,12 @@ Tapez "abonnement" pour en savoir plus.`;
 
     console.log(`[WhatsApp AI] Handling question: ${question}`);
 
-    // Search for recent articles
-    const articles = await fetchNewsByTopic("Actualités", 5, 2); // Last 2 days
+    // Extract keywords from the question
+    const keywords = await extractKeywordsFromQuestion(question);
+    console.log(`[WhatsApp AI] Extracted keywords: ${keywords}`);
+
+    // Search for recent articles using extracted keywords
+    const articles = await fetchNewsByTopic(keywords, 5, 2); // Last 2 days
 
     if (!articles || articles.length === 0) {
       return `Je n'ai pas trouvé d'actualités récentes sur ce sujet. Essayez une autre question ou un thème différent.
@@ -205,8 +269,10 @@ Tapez "abonnement" pour en savoir plus.`;
 💡 **Astuce** : Pour recevoir des résumés quotidiens automatiques, tapez "abonnement"`;
     }
 
-    // Generate synthesis with OpenAI
-    const result = await generateSynthesisWithOpenAI(["Actualités"], 5, 2);
+    console.log(`[WhatsApp AI] Found ${articles.length} articles for keywords: ${keywords}`);
+
+    // Generate synthesis with OpenAI using the question as context
+    const result = await generateSynthesisWithOpenAI([keywords], 5, 2, question);
 
     if (!result.success || !result.synthesis) {
       return `Désolé, je n'ai pas pu générer une réponse. Veuillez réessayer.`;

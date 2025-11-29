@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { formatArticlesForSynthesis } from "../services/newsApi";
+import { formatArticlesForSynthesis } from "../services/googleNewsRss";
 import { formatSynthesisForWhatsApp } from "../services/synthesisGenerator";
 
 describe("NewsAPI Service", () => {

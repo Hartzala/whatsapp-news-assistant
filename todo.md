@@ -206,4 +206,30 @@
 - [x] Vérifier le code d'envoi de message dans twilioWebhook.ts
 - [x] Corriger le problème : supprimer whatsappPhoneNumber du schéma Drizzle
 - [x] Corriger synthesisScheduler.ts et stripe.ts pour utiliser openId
-- [ ] Tester et pousser sur GitHub
+- [x] Tester et pousser sur GitHub
+
+## Phase 28: Remplacement NewsAPI.ai par Google News RSS
+- [x] Analyser le service newsApi.ts actuel
+- [x] Créer le service googleNewsRss.ts
+- [x] Remplacer les appels NewsAPI.ai dans whatsappAiHandler.ts
+- [x] Remplacer les appels NewsAPI.ai dans openaiSynthesis.ts
+- [x] Remplacer les appels NewsAPI.ai dans synthesisGenerator.ts
+- [x] Remplacer les appels NewsAPI.ai dans services.test.ts
+- [x] Tester le build
+- [ ] Créer un checkpoint et pousser sur GitHub
+
+## Phase 29: Recherche par Mots-Clés dans handleQuestion()
+- [x] Analyser handleQuestion() actuel (utilise toujours "Actualités")
+- [x] Créer une fonction extractKeywordsFromQuestion() avec OpenAI
+- [x] Modifier handleQuestion() pour extraire les mots-clés de la question
+- [x] Utiliser les mots-clés extraits pour chercher des articles pertinents
+- [x] Tester avec différentes questions (sport, tech, politique, etc.)
+- [ ] Créer un checkpoint et pousser sur GitHub
+
+## Phase 30: Amélioration Prompt OpenAI pour Réponses Ciblées
+- [x] Analyser le prompt OpenAI actuel dans openaiSynthesis.ts
+- [x] Modifier le prompt pour répondre directement à la question posée
+- [x] Ajouter un paramètre userQuestion à generateSynthesisWithOpenAI()
+- [x] Passer la question depuis handleQuestion()
+- [x] Tester le build
+- [ ] Créer un checkpoint et pousser sur GitHub
